@@ -90,16 +90,7 @@ fun ReceitaCard(receita: Receita, modifier: Modifier = Modifier) {
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(containerColor = Branco)
     ) {
-        imagemReceita(receita.imagem)?.let { imagem ->
-        Image(
-            painter = painterResource(id = imagem),
-            contentDescription = receita.nome,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-        )
-        }
+        ImagemReceita(receita.foto, receita.imagem, receita.nome, 120.dp)
         Text(
             text = receita.nome,
             modifier = Modifier.padding(8.dp)

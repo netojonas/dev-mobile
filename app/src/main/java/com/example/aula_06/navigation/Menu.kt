@@ -7,15 +7,16 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.text.style.TextAlign
 import com.example.aula_06.ui.theme.AzulTopo
 
 @Composable
-fun Menu(aoReceitas: () -> Unit, aoCompras: () -> Unit, aoUsuarios: () -> Unit, aoSair: () -> Unit) {
+fun Menu(aoReceitas: () -> Unit, aoCompras: () -> Unit, aoMercados: () -> Unit,
+         aoUsuarios: () -> Unit, aoSair: () -> Unit) {
     Row(Modifier.fillMaxWidth().background(AzulTopo), verticalAlignment = Alignment.CenterVertically) {
-        TextButton(onClick = aoReceitas, modifier = Modifier.weight(1f)) { Text("Receitas") }
-        TextButton(onClick = aoCompras, modifier = Modifier.weight(1.4f)) { Text("Lista de compras", textAlign = TextAlign.Center) }
-        TextButton(onClick = aoUsuarios, modifier = Modifier.weight(1f)) { Text("Usuarios") }
-        TextButton(onClick = aoSair, modifier = Modifier.weight(0.8f)) { Text("Sair") }
+        TextButton(onClick = aoReceitas, modifier = Modifier.weight(1f)) { Text("Receitas", maxLines = 1) }
+        TextButton(onClick = aoCompras, modifier = Modifier.weight(1f)) { Text("Compras", maxLines = 1) }
+        TextButton(onClick = aoMercados, modifier = Modifier.weight(1f)) { Text("Mercados", maxLines = 1) }
+        TextButton(onClick = aoUsuarios, modifier = Modifier.weight(1f)) { Text("Usuarios", maxLines = 1) }
+        TextButton(onClick = aoSair, modifier = Modifier.weight(0.7f)) { Text("Sair", maxLines = 1) }
     }
 }

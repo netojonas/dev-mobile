@@ -9,5 +9,7 @@ data class Receita(
     val ingredientes: String = "",
     val modoPreparo: String = "",
     // Nome estavel do recurso existente; novos cadastros podem nao ter foto.
-    val imagem: String? = null
+    val imagem: String? = null,
+    // Foto tirada pela camera ou escolhida na galeria (coluna BLOB).
+    val foto: ByteArray? = null
 )

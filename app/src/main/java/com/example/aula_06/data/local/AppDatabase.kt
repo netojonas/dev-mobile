@@ -9,7 +9,7 @@ import java.io.File
 class AppDatabase(context: Context) : SQLiteOpenHelper(
     context.applicationContext,
     File(context.noBackupFilesDir, "receitas_diarias.db").absolutePath,
-    null, 1
+    null, 2
 ) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("""
@@ -30,9 +30,11 @@ class AppDatabase(context: Context) : SQLiteOpenHelper(
                 dificuldade TEXT NOT NULL,
                 ingredientes TEXT NOT NULL,
                 modo_preparo TEXT NOT NULL,
-                imagem TEXT
+                imagem TEXT,
+                foto BLOB
             )
         """.trimIndent())
+        criarMercados(db)
         db.execSQL("""
             CREATE TABLE itens_compra (
                 id INTEGER PRIMARY KEY,
@@ -58,7 +60,25 @@ class AppDatabase(context: Context) : SQLiteOpenHelper(
         }
     }
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // Primeira versao. Futura alteracao exige migracao explicita, sem apagar dados.
-        error("Migracao de $oldVersion para $newVersion ainda nao definida.")
+        // Versao 1 -> 2: adiciona a foto da receita e a tabela de mercados,
+        // sem apagar os dados de quem ja tinha o app instalado.
+        if (oldVersion < 2) {
+            db.execSQL("ALTER TABLE receitas ADD COLUMN foto BLOB")
+            criarMercados(db)
+        }
+    }
+
+    private fun criarMercados(db: SQLiteDatabase) {
+        db.execSQL("""
+            CREATE TABLE mercados (
+                id INTEGER PRIMARY KEY,
+                nome TEXT NOT NULL CHECK(length(trim(nome)) > 0),
+                cep TEXT NOT NULL,
+                rua TEXT NOT NULL DEFAULT '',
+                bairro TEXT NOT NULL DEFAULT '',
+                cidade TEXT NOT NULL DEFAULT '',
+                uf TEXT NOT NULL DEFAULT ''
+            )
+        """.trimIndent())
     }
 }

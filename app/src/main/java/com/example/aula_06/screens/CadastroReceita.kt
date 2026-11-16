@@ -55,6 +55,8 @@ fun CadastroReceitaScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                item { CampoFotoReceita(viewModel) }
+
                 item {
                     OutlinedTextField(
                         value = viewModel.nome,

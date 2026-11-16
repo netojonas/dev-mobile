@@ -70,18 +70,7 @@ fun DetalheReceitaScreen(viewModel: ReceitaViewModel, modifier: Modifier = Modif
         Column(modifier = Modifier.padding(16.dp)) {
 
             // Imagem da receita
-            imagemReceita(receita.imagem)?.let { imagem ->
-            Image(
-                painter = painterResource(id = imagem),
-                contentDescription = receita.nome,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(12.dp))
-            )
-
-            }
+            ImagemReceita(receita.foto, receita.imagem, receita.nome, 200.dp)
             Spacer(modifier = Modifier.height(12.dp))
             Text(text = receita.nome, fontWeight = FontWeight.Medium, color = AzulEscuro)
 

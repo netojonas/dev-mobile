@@ -13,3 +13,6 @@ import kotlinx.serialization.Serializable
 @Serializable object Usuarios
 @Serializable object CadastrarUsuario
 @Serializable data class UsuarioEditar(val id: Long)
+@Serializable object Mercados
+@Serializable object CadastroMercado
+@Serializable data class MercadoEditar(val id: Long)

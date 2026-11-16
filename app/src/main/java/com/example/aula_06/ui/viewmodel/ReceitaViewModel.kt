@@ -1,6 +1,9 @@
 package com.example.aula_06.ui.viewmodel
 
 import android.app.Application
+import android.graphics.Bitmap
+import android.net.Uri
+import com.example.aula_06.data.ImagemConversor
 import androidx.compose.runtime.*
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -41,6 +44,41 @@ class ReceitaViewModel(application: Application) : AndroidViewModel(application)
         private set
     var excluido by mutableStateOf(false)
         private set
+    // Foto em bytes (BLOB). A tela abre a camera/galeria e entrega o resultado aqui.
+    var foto by mutableStateOf<ByteArray?>(null)
+        private set
+    var mensagemFoto by mutableStateOf<String?>(null)
+        private set
+
+    fun receberFoto(imagem: Bitmap?) {
+        if (imagem == null) {
+            mensagemFoto = "Captura cancelada."
+            return
+        }
+        foto = ImagemConversor.paraBlob(imagem)
+        mensagemFoto = null
+    }
+
+    fun receberImagem(uri: Uri?) {
+        if (uri == null) {
+            mensagemFoto = "Nenhuma imagem selecionada."
+            return
+        }
+        viewModelScope.launch {
+            try {
+                foto = ImagemConversor.paraBlob(getApplication(), uri)
+                mensagemFoto = null
+            } catch (erro: CancellationException) {
+                throw erro
+            } catch (_: Exception) {
+                mensagemFoto = "Nao foi possivel abrir a imagem."
+            }
+        }
+    }
+
+    fun informarFalhaFoto(origem: String) {
+        mensagemFoto = "Nao foi possivel abrir a $origem."
+    }
 
     private fun executar(operacao: suspend () -> Unit) {
         if (carregando || salvo || excluido) return
@@ -79,6 +117,7 @@ class ReceitaViewModel(application: Application) : AndroidViewModel(application)
         dificuldade = encontrado.dificuldade
         ingredientes = encontrado.ingredientes
         modoPreparo = encontrado.modoPreparo
+        foto = encontrado.foto
         carregado = true
     }
 
@@ -117,7 +156,8 @@ class ReceitaViewModel(application: Application) : AndroidViewModel(application)
                 porcoes = porcoes.trim(),
                 dificuldade = dificuldade.trim(),
                 ingredientes = ingredientes.trim(),
-                modoPreparo = modoPreparo.trim()
+                modoPreparo = modoPreparo.trim(),
+                foto = foto
             ))
         }
         salvo = true
@@ -142,7 +182,8 @@ class ReceitaViewModel(application: Application) : AndroidViewModel(application)
                 dificuldade = dificuldade.trim(),
                 ingredientes = ingredientes.trim(),
                 modoPreparo = modoPreparo.trim(),
-                imagem = receita.imagem
+                imagem = receita.imagem,
+                foto = foto
             ))
         }
         salvo = true

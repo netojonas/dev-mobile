@@ -35,11 +35,14 @@ fun NavGraph() {
             !destino.hasRoute<Login>() &&
             !destino.hasRoute<CadastrarUsuario>() &&
             !destino.hasRoute<CadastroReceita>() &&
-            !destino.hasRoute<CadastroItemCompra>()) {
+            !destino.hasRoute<CadastroItemCompra>() &&
+            !destino.hasRoute<CadastroMercado>()) {
             Menu(aoReceitas = {
                 navController.navigate(Home) { popUpTo<Home>(); launchSingleTop = true }
             }, aoCompras = {
                 navController.navigate(ListaCompras) { popUpTo<Home>(); launchSingleTop = true }
+            }, aoMercados = {
+                navController.navigate(Mercados) { popUpTo<Home>(); launchSingleTop = true }
             }, aoUsuarios = {
                 navController.navigate(Usuarios) { popUpTo<Home>(); launchSingleTop = true }
             }, aoSair = SessaoUsuario::encerrar)
@@ -117,6 +120,34 @@ fun NavGraph() {
                     ReceitaEditarScreen(viewModel = viewModel(),
                         receitaId = entrada.toRoute<ReceitaEditar>().id,
                         aoSalvar = { navController.popBackStack() },
+                        aoVoltar = { navController.popBackStack() })
+                }
+            }
+            composable<Mercados> { entrada ->
+                if (usuarioAtual != null) {
+                    val vm: MercadoViewModel = viewModel()
+                    DisposableEffect(entrada) {
+                        val observador = LifecycleEventObserver { _, evento ->
+                            if (evento == Lifecycle.Event.ON_RESUME) vm.listar()
+                        }
+                        entrada.lifecycle.addObserver(observador)
+                        onDispose { entrada.lifecycle.removeObserver(observador) }
+                    }
+                    MercadosScreen(viewModel = vm,
+                        aoNovo = { navController.navigate(CadastroMercado) },
+                        aoEditar = { navController.navigate(MercadoEditar(it)) })
+                }
+            }
+            composable<CadastroMercado> {
+                if (usuarioAtual != null) {
+                    CadastroMercadoScreen(viewModel = viewModel(),
+                        aoVoltar = { navController.popBackStack() })
+                }
+            }
+            composable<MercadoEditar> { entrada ->
+                if (usuarioAtual != null) {
+                    MercadoEditarScreen(viewModel = viewModel(),
+                        mercadoId = entrada.toRoute<MercadoEditar>().id,
                         aoVoltar = { navController.popBackStack() })
                 }
             }
